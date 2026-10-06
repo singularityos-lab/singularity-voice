@@ -1,0 +1,33 @@
+{
+    "schema-id": "dev.sinty.voice",
+    "settings": [
+        {
+            "key": "export-format",
+            "label": "Export Format",
+            "type": "string",
+            "widget": "combo",
+            "options": [
+                { "id": "opus", "label": "Opus" },
+                { "id": "m4a", "label": "AAC (M4A)" },
+                { "id": "mp3", "label": "MP3" },
+                { "id": "flac", "label": "FLAC" },
+                { "id": "wav", "label": "WAV" }
+            ]
+        },
+        {
+            "key": "transcription-language",
+            "label": "Transcription Language",
+            "type": "string",
+            "widget": "combo",
+            "options": [
+                { "id": "auto", "label": "Detect Automatically" },
+                { "id": "en", "label": "English" },
+                { "id": "it", "label": "Italian" },
+                { "id": "de", "label": "German" },
+                { "id": "fr", "label": "French" },
+                { "id": "es", "label": "Spanish" },
+                { "id": "pt", "label": "Portuguese" }
+            ]
+        }
+    ]
+}

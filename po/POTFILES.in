@@ -1,0 +1,10 @@
+src/app.vala
+src/window.vala
+src/audio.vala
+src/formats.vala
+src/library.vala
+src/transcriber.vala
+src/waveform_view.vala
+src/device_picker.vala
+src/recording_list.vala
+data/dev.sinty.voice.desktop

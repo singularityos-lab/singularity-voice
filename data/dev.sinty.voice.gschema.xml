@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="dev.sinty.voice" path="/dev/sinty/voice/">
+    <key name="input-device" type="s">
+      <default>''</default>
+      <summary>Input device</summary>
+      <description>Identifier of the microphone used for new recordings; empty uses the system default input.</description>
+    </key>
+    <key name="export-format" type="s">
+      <default>'m4a'</default>
+      <summary>Export format</summary>
+      <description>Format chosen by default when exporting: opus, m4a, mp3, flac or wav. Formats without an installed encoder are skipped.</description>
+    </key>
+    <key name="playback-speed" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="2.0"/>
+      <summary>Playback speed</summary>
+      <description>Speed used when playing recordings, keeping the pitch.</description>
+    </key>
+    <key name="transcription-language" type="s">
+      <default>'auto'</default>
+      <summary>Transcription language</summary>
+      <description>Language code passed to the speech engine, or auto to detect it.</description>
+    </key>
+  </schema>
+</schemalist>
