@@ -9,7 +9,7 @@ namespace Singularity.Apps.Voice {
         private bool record_pending = false;
 
         public VoiceApp() {
-            Object(application_id: "dev.sinty.voice", flags: ApplicationFlags.DEFAULT_FLAGS);
+            Object(application_id: "dev.sinty.voice", flags: ApplicationFlags.HANDLES_OPEN);
             add_main_option("record", 0, OptionFlags.NONE, OptionArg.NONE, _("Start a new recording"), null);
         }
 
@@ -50,6 +50,7 @@ namespace Singularity.Apps.Voice {
             f2.append(_("Export…"), "win.export");
             f2.append(_("Share…"), "win.share");
             f2.append(_("Show in Files"), "win.show-in-files");
+            f2.append(_("Add Moment to a Note…"), "win.add-moment");
             file_menu.append_section(null, f2);
             var f3 = new GLib.Menu();
             f3.append(_("Close Window"), "win.close");
@@ -153,6 +154,21 @@ namespace Singularity.Apps.Voice {
         protected override void shutdown() {
             if (devices != null) devices.stop();
             base.shutdown();
+        }
+
+        public override void open(File[] files, string hint) {
+            activate();
+            foreach (var f in files) {
+                string uri = f.get_uri();
+                if (!uri.has_prefix("sinty-recorder://")) continue;
+                try {
+                    var parsed = Uri.parse(uri, UriFlags.NONE);
+                    var q = Uri.parse_params(parsed.get_query() ?? "", -1, "&", UriParamsFlags.NONE);
+                    window.open_moment(q["id"] ?? "", int.parse(q["t"] ?? "0"));
+                } catch (Error e) {
+                    warning("Recorder: bad moment link %s", uri);
+                }
+            }
         }
 
         protected override void activate() {

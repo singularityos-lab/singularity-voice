@@ -1,11 +1,12 @@
 [Desktop Entry]
 Name=Recorder
 Comment=Record voice notes and meetings
-Exec=singularity-voice
+Exec=singularity-voice %U
 Icon=dev.sinty.voice
 Terminal=false
 Type=Application
 Categories=AudioVideo;Audio;Recorder;
+MimeType=x-scheme-handler/sinty-recorder;
 Keywords=voice;memo;record;microphone;meeting;audio;dictaphone;
 StartupWMClass=dev.sinty.voice
 DBusActivatable=true

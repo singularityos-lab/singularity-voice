@@ -202,6 +202,7 @@ namespace Singularity.Apps.Voice {
                 { "transcribe", () => transcribe.begin() },
                 { "delete", () => confirm_delete(current) },
                 { "show-in-files", () => show_in_files(current) },
+                { "add-moment", () => add_moment() },
                 { "search", () => focus_search() },
                 { "play", () => toggle_play() },
                 { "speed", on_speed, "d", "1.0" },
@@ -306,6 +307,12 @@ namespace Singularity.Apps.Voice {
             menu.set_pointing_to(Gdk.Rectangle() { x = (int) x, y = (int) y, width = 1, height = 1 });
             menu.add_item(_("Rename…"), "document-edit-symbolic", () => open_rename(recording));
             menu.add_item(_("Share…"), "singularity-share-symbolic", () => share(recording));
+            menu.add_item(_("Send to Notes…"), "document-send-symbolic", () => {
+                Idle.add(() => {
+                    Singularity.Notes.NotePicker.popup(anchor, (id) => send_to_note(recording, id));
+                    return Source.REMOVE;
+                });
+            });
             menu.add_item(_("Show in Files"), "folder-open-symbolic", () => show_in_files(recording));
             menu.add_separator();
             menu.add_item(_("Delete…"), "user-trash-symbolic", () => confirm_delete(recording), "destructive-action");
@@ -686,7 +693,7 @@ namespace Singularity.Apps.Voice {
             share_bubble.visible = detail;
             delete_bubble.visible = detail;
             bool has = current != null && idle && job == null;
-            foreach (string name in new string[] { "export", "share", "rename", "trim", "delete", "play", "show-in-files" }) {
+            foreach (string name in new string[] { "export", "share", "rename", "trim", "delete", "play", "show-in-files", "add-moment" }) {
                 ((SimpleAction) lookup_action(name)).set_enabled(has);
             }
             ((SimpleAction) lookup_action("transcribe")).set_enabled(has && transcriber != null && transcribing == null);
@@ -777,6 +784,34 @@ namespace Singularity.Apps.Voice {
             library.save();
             recording.changed();
             if (current == recording) show_recording(recording);
+        }
+
+        private void add_moment() {
+            if (current == null) return;
+            var recording = current;
+            int seconds = (int) (player.position() / NS_PER_SECOND);
+            Singularity.Notes.NotePicker.popup(detail_wave, (id) => {
+                string when = "%d:%02d".printf(seconds / 60, seconds % 60);
+                string link = "sinty-recorder://moment?id=%s&t=%d".printf(Uri.escape_string(recording.id, null, false), seconds);
+                try {
+                    var note = Singularity.Notes.NotePicker.target(id, recording.title);
+                    Singularity.Notes.NotePicker.append(note, "[%s, %s](%s)\n".printf(recording.title.replace("]", ""), when, link));
+                    add_toast(Singularity.Notes.NotePicker.toast(note, id == null, _("Moment")));
+                } catch (Error e) {
+                    add_toast(new Toast(e.message));
+                }
+            });
+        }
+
+        public void open_moment(string id, int seconds) {
+            var recording = library.find(id);
+            if (recording == null) {
+                add_toast(new Toast(_("This recording is no longer in Recorder")));
+                return;
+            }
+            show_recording(recording);
+            player.seek_when_ready(seconds * NS_PER_SECOND);
+            player.play();
         }
 
         public void show_recording(Recording? recording) {
@@ -1043,6 +1078,20 @@ namespace Singularity.Apps.Voice {
                 add_toast(done);
             } else if (result.error != null) {
                 show_error(_("The Recording Could Not Be Exported"), result.error);
+            }
+        }
+
+        private void send_to_note(Recording recording, string? note_id) {
+            try {
+                var note = Singularity.Notes.NotePicker.target(note_id, recording.title);
+                string ext = recording.file_name.contains(".") ? recording.file_name.substring(recording.file_name.last_index_of(".") + 1) : "ogg";
+                string link = Singularity.Notes.NotePicker.attach_file(note, recording.file(library), Singularity.Notes.NotePicker.attachment_name("recording", ext));
+                var block = new StringBuilder("[%s](%s)\n".printf(_("Audio recording, %s").printf(recording.title.replace("]", "")), link));
+                if (recording.transcript.strip() != "") block.append("\n%s\n".printf(recording.transcript.strip()));
+                Singularity.Notes.NotePicker.append(note, block.str);
+                add_toast(Singularity.Notes.NotePicker.toast(note, note_id == null, _("Recording")));
+            } catch (Error e) {
+                add_toast(new Singularity.Widgets.Toast(e.message));
             }
         }
 

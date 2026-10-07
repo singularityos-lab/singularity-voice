@@ -516,6 +516,13 @@ namespace Singularity.Apps.Voice {
             apply_rate(to.clamp(0, duration > 0 ? duration : to));
         }
 
+        public void seek_when_ready(int64 to) {
+            if (uri == "") return;
+            Gst.State state, pending;
+            playbin.get_state(out state, out pending, 2 * Gst.SECOND);
+            seek(to);
+        }
+
         public void change_speed(double value) {
             speed = value;
             apply_rate(position());
