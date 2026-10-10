@@ -50,7 +50,7 @@ namespace Singularity.Apps.Voice {
             f2.append(_("Export…"), "win.export");
             f2.append(_("Share…"), "win.share");
             f2.append(_("Show in Files"), "win.show-in-files");
-            f2.append(_("Add Moment to a Note…"), "win.add-moment");
+            if (Singularity.Notes.NotePicker.available()) f2.append(_("Add Moment to a Note…"), "win.add-moment");
             file_menu.append_section(null, f2);
             var f3 = new GLib.Menu();
             f3.append(_("Close Window"), "win.close");
