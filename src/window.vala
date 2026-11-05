@@ -570,6 +570,7 @@ namespace Singularity.Apps.Voice {
                 speed_menu.append_item(item);
             }
             var speed_popover = new PopoverMenu.from_model(speed_menu);
+            speed_popover.add_css_class("singularity-app-menu");
             speed_popover.set_parent(speed_button);
             speed_popover.has_arrow = false;
             speed_button.clicked.connect(() => speed_popover.popup());
