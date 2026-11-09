@@ -285,12 +285,14 @@ namespace Singularity.Apps.Voice {
 
         public async TranscodeResult run(File source, string? target, ExportFormat? format, owned Span[] keep_ns, int64 source_duration) {
             var result = new TranscodeResult();
-            SourceFunc callback = run.callback;
-            new Thread<void>("voice-transcode", () => {
-                work(source, target, format, keep_ns, source_duration, result);
-                Idle.add((owned) callback);
-            });
-            yield;
+            try {
+                yield Async.run<bool>((c) => {
+                    work(source, target, format, keep_ns, source_duration, result);
+                    return true;
+                }, Async.Qos.USER);
+            } catch (Error e) {
+                warning("%s", e.message);
+            }
             return result;
         }
 
