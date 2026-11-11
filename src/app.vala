@@ -89,6 +89,7 @@ namespace Singularity.Apps.Voice {
             rec_menu.append(_("Discard Recording"), "win.discard");
             menu.append_submenu(_("Recording"), rec_menu);
             set_menubar(menu);
+            VoiceIntents.install(this);
 
             var quit_action = new SimpleAction("quit", null);
             quit_action.activate.connect(() => {
@@ -169,6 +170,12 @@ namespace Singularity.Apps.Voice {
                     warning("Recorder: bad moment link %s", uri);
                 }
             }
+        }
+
+        internal VoiceWindow agent_window() {
+            if (window == null) activate();
+            else window.present();
+            return window;
         }
 
         protected override void activate() {

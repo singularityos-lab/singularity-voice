@@ -1127,6 +1127,83 @@ namespace Singularity.Apps.Voice {
             });
         }
 
+        internal Recorder agent_recorder() {
+            return recorder;
+        }
+
+        internal Player agent_player() {
+            return player;
+        }
+
+        internal Recording? agent_current() {
+            return current;
+        }
+
+        internal bool agent_busy() {
+            return job != null || transcribing != null;
+        }
+
+        internal bool agent_can_transcribe() {
+            return transcriber != null;
+        }
+
+        internal void agent_toggle_pause() {
+            toggle_pause();
+        }
+
+        internal void agent_play(Recording recording, int64 at) {
+            show_recording(recording);
+            if (at >= 0) {
+                player.seek(at);
+                detail_wave.position = at;
+                update_position();
+            }
+            if (!player.playing) player.play();
+            sync_play();
+        }
+
+        internal void agent_pause() {
+            player.pause();
+            sync_play();
+        }
+
+        internal void agent_rename(Recording recording, string title) {
+            library.rename(recording, title);
+            if (current == recording) detail_title.label = recording.title;
+        }
+
+        internal void agent_delete(Recording recording) {
+            if (current != recording) {
+                library.remove(recording);
+                return;
+            }
+            int index = library.items.index_of(recording);
+            player.close();
+            current = null;
+            library.remove(recording);
+            if (library.items.size > 0) show_recording(library.items[int.min(index, library.items.size - 1)]);
+            else show_page("welcome");
+        }
+
+        internal async void agent_trim(Recording recording, int64 start, int64 end, TrimMode mode, bool as_copy) {
+            var cut = new TrimRange(recording.duration);
+            cut.move_end(end);
+            cut.move_start(start);
+            if (!cut.changes_anything(mode)) return;
+            player.close();
+            yield run_trim(recording, cut.kept(mode), as_copy);
+        }
+
+        internal async void agent_export(Recording recording, ExportFormat format, string path) {
+            yield run_export(recording, format, path);
+        }
+
+        internal async void agent_transcribe(Recording recording) {
+            show_recording(recording);
+            if (current != recording) return;
+            yield transcribe();
+        }
+
         private void open_rename(Recording? recording) {
             if (recording == null) return;
             var dlg = new ConfirmDialog(app, _("Rename Recording"), "audio-x-generic", null, _("Rename"), ConfirmDialog.ActionStyle.SUGGESTED);
