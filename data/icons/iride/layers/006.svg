@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="236" height="236" viewBox="0 0 236 236" fill="none"><defs><linearGradient id="vo_body" x1="84" y1="18" x2="160" y2="150" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#ff8a70" />
+<stop offset="0.5" stop-color="#f0443a" />
+<stop offset="1" stop-color="#c3232a" />
+</linearGradient>
+</defs><rect x="80" y="18" width="76" height="132" rx="38" fill="url(#vo_body)" />
+</svg>

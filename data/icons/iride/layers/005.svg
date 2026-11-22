@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="236" height="236" viewBox="0 0 236 236" fill="none"><defs><linearGradient id="vo_depth" x1="118" y1="30" x2="118" y2="158" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#a51b22" />
+<stop offset="1" stop-color="#6e1016" />
+</linearGradient>
+</defs><rect x="80" y="26" width="76" height="132" rx="38" fill="url(#vo_depth)" />
+</svg>

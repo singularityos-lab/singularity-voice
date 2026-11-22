@@ -1,0 +1,354 @@
+{
+ "format": 1,
+ "canvas": [
+  236,
+  236
+ ],
+ "box": [
+  52,
+  18,
+  184,
+  218
+ ],
+ "stack": [
+  {
+   "shadow": {
+    "dx": 0,
+    "dy": 4,
+    "blur": 6,
+    "color": "#4c0d0d",
+    "opacity": 0.45,
+    "region": [
+     0,
+     0,
+     236,
+     236
+    ]
+   },
+   "stack": [
+    {
+     "layer": "layers/000.svg",
+     "piece": "arm"
+    },
+    {
+     "layer": "layers/001.svg",
+     "piece": "arm"
+    },
+    {
+     "layer": "layers/002.svg",
+     "piece": "arm"
+    },
+    {
+     "layer": "layers/003.svg",
+     "piece": "arm"
+    },
+    {
+     "layer": "layers/004.svg",
+     "piece": "arm"
+    },
+    {
+     "layer": "layers/005.svg",
+     "piece": "capsule"
+    },
+    {
+     "layer": "layers/006.svg",
+     "piece": "capsule"
+    }
+   ]
+  },
+  {
+   "clip": "M118 18H118A38 38 0 0 1 156 56V112A38 38 0 0 1 118 150H118A38 38 0 0 1 80 112V56A38 38 0 0 1 118 18Z",
+   "stack": [
+    {
+     "layer": "layers/007.svg",
+     "piece": "capsule"
+    },
+    {
+     "layer": "layers/008.svg",
+     "piece": "grid"
+    },
+    {
+     "layer": "layers/009.svg",
+     "piece": "grid"
+    }
+   ]
+  },
+  {
+   "rim": "M118 18H118A38 38 0 0 1 156 56V112A38 38 0 0 1 118 150H118A38 38 0 0 1 80 112V56A38 38 0 0 1 118 18Z",
+   "light": [
+    80,
+    18,
+    156,
+    150
+   ],
+   "piece": "edge"
+  },
+  {
+   "layer": "layers/011.svg",
+   "piece": "edge"
+  }
+ ],
+ "motion": [
+  {
+   "piece": "arm",
+   "origin": [
+    118.0,
+    118.0
+   ],
+   "tracks": [
+    {
+     "kind": "opacity",
+     "from": [
+      1
+     ],
+     "at": 640,
+     "duration": 75,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "capsule",
+   "origin": [
+    118.0,
+    88.0
+   ],
+   "tracks": [
+    {
+     "kind": "scale",
+     "from": [
+      0.9,
+      0.9
+     ],
+     "at": 0,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.09,
+      1.09
+     ],
+     "at": 100,
+     "duration": 90,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      0.87,
+      0.87
+     ],
+     "at": 190,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.12,
+      1.12
+     ],
+     "at": 290,
+     "duration": 110,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      0.93,
+      0.93
+     ],
+     "at": 400,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.09,
+      1.09
+     ],
+     "at": 500,
+     "duration": 140,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "grid",
+   "origin": [
+    118.0,
+    88.0
+   ],
+   "tracks": [
+    {
+     "kind": "scale",
+     "from": [
+      0.9,
+      0.9
+     ],
+     "at": 0,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.09,
+      1.09
+     ],
+     "at": 100,
+     "duration": 90,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      0.87,
+      0.87
+     ],
+     "at": 190,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.12,
+      1.12
+     ],
+     "at": 290,
+     "duration": 110,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      0.93,
+      0.93
+     ],
+     "at": 400,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.09,
+      1.09
+     ],
+     "at": 500,
+     "duration": 140,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      1.8
+     ],
+     "at": 0,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      0.2
+     ],
+     "at": 100,
+     "duration": 90,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      1.8
+     ],
+     "at": 190,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      0.2
+     ],
+     "at": 290,
+     "duration": 110,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "edge",
+   "origin": [
+    118.0,
+    88.0
+   ],
+   "tracks": [
+    {
+     "kind": "scale",
+     "from": [
+      0.9,
+      0.9
+     ],
+     "at": 0,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.09,
+      1.09
+     ],
+     "at": 100,
+     "duration": 90,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      0.87,
+      0.87
+     ],
+     "at": 190,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.12,
+      1.12
+     ],
+     "at": 290,
+     "duration": 110,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      0.93,
+      0.93
+     ],
+     "at": 400,
+     "duration": 100,
+     "ease": "linear"
+    },
+    {
+     "kind": "scale",
+     "from": [
+      1.09,
+      1.09
+     ],
+     "at": 500,
+     "duration": 140,
+     "ease": "linear"
+    }
+   ]
+  }
+ ]
+}
