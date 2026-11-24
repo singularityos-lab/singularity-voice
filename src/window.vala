@@ -1127,6 +1127,63 @@ namespace Singularity.Apps.Voice {
             });
         }
 
+        public void prepare_move() throws Singularity.Migration.MigrationError {
+            if (recorder.state != RecorderState.IDLE) throw new Singularity.Migration.MigrationError.UNSUPPORTED(_("Finish the recording before moving Recorder"));
+            if (job != null) throw new Singularity.Migration.MigrationError.UNSUPPORTED(_("Wait for the export or trim to finish before moving Recorder"));
+            if (transcribing != null) throw new Singularity.Migration.MigrationError.UNSUPPORTED(_("Wait for the transcript before moving Recorder"));
+        }
+
+        public Variant save_migration() {
+            var d = new VariantDict();
+            d.insert_value("page", new Variant.string(stack.visible_child_name ?? "welcome"));
+            if (current != null) {
+                d.insert_value("recording", library.describe(current));
+                d.insert_value("position", new Variant.int64(detail_wave.position));
+                d.insert_value("playing", new Variant.boolean(player.playing));
+            }
+            if (range != null) {
+                d.insert_value("trim", new Variant("(xxbx)", range.start, range.end, trim_mode == TrimMode.REMOVE, trim_wave.position));
+            }
+            return d.end();
+        }
+
+        public string[] migration_files() {
+            if (current == null) return {};
+            return { Singularity.Migration.portable_path(current.file(library)) };
+        }
+
+        public void restore_migration(Variant data) {
+            var d = new VariantDict(data);
+            var saved = d.lookup_value("recording", new VariantType("(sssxxss)"));
+            var recording = saved != null ? library.find(saved.get_child_value(0).get_string()) : null;
+            if (recording == null) return;
+            show_recording(recording);
+            int64 position = (d.lookup_value("position", VariantType.INT64) ?? new Variant.int64(0)).get_int64();
+            if (position > 0) {
+                player.seek_when_ready(position);
+                detail_wave.position = position;
+                pos_label.label = Timecode.format(position);
+            }
+            var trim = d.lookup_value("trim", new VariantType("(xxbx)"));
+            string page = (d.lookup_value("page", VariantType.STRING) ?? new Variant.string("detail")).get_string();
+            if (trim != null && page == "trim") {
+                int64 start, end, at;
+                bool remove;
+                trim.get("(xxbx)", out start, out end, out remove, out at);
+                open_trim();
+                range.move_end(end);
+                range.move_start(start);
+                trim_mode = remove ? TrimMode.REMOVE : TrimMode.KEEP;
+                trim_switch.set_active(remove ? "remove" : "keep");
+                trim_wave.trim_mode = trim_mode;
+                trim_wave.position = at;
+                sync_trim();
+                return;
+            }
+            var playing = d.lookup_value("playing", VariantType.BOOLEAN);
+            if (playing != null && playing.get_boolean()) player.play();
+        }
+
         internal Recorder agent_recorder() {
             return recorder;
         }

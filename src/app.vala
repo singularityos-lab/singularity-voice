@@ -1,6 +1,6 @@
 namespace Singularity.Apps.Voice {
 
-    public class VoiceApp : Singularity.Application {
+    public class VoiceApp : Singularity.Application, Singularity.Migration.Migratable {
         public GLib.Settings settings { get; private set; }
         public Library library { get; private set; }
         public InputDevices devices { get; private set; }
@@ -179,19 +179,55 @@ namespace Singularity.Apps.Voice {
         }
 
         protected override void activate() {
-            if (window == null) {
-                window = new VoiceWindow(this);
-                window.close_request.connect(() => {
-                    if (window.busy_recording()) return true;
-                    window = null;
-                    return false;
-                });
-            }
+            if (window == null) adopt(new VoiceWindow(this));
             window.present();
             if (record_pending) {
                 record_pending = false;
                 window.start_recording();
             }
+        }
+
+        private void adopt(VoiceWindow w) {
+            window = w;
+            w.close_request.connect(() => {
+                if (w.busy_recording()) return true;
+                if (window == w) window = null;
+                return false;
+            });
+        }
+
+        public void prepare_move() throws Singularity.Migration.MigrationError {
+            if (window != null) window.prepare_move();
+        }
+
+        public Variant save_model() {
+            return new VariantDict().end();
+        }
+
+        public async void restore_model(Variant model) throws Error {
+        }
+
+        public string window_kind(Gtk.Window w) {
+            return (w is VoiceWindow) ? "recorder" : "";
+        }
+
+        public Variant save_window(Gtk.Window w) {
+            return ((VoiceWindow) w).save_migration();
+        }
+
+        public string[] files() {
+            return window != null ? window.migration_files() : new string[0];
+        }
+
+        public async Gtk.Window? rebuild_window(string kind, Variant data) throws Error {
+            if (kind != "recorder") return null;
+            if (window != null) window.destroy();
+            var recording = new VariantDict(data).lookup_value("recording", new VariantType("(sssxxss)"));
+            if (recording != null) library.receive(recording);
+            var w = new VoiceWindow(this);
+            adopt(w);
+            w.restore_migration(data);
+            return w;
         }
 
         public static int main(string[] args) {

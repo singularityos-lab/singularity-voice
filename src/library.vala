@@ -135,6 +135,42 @@ namespace Singularity.Apps.Voice {
             return recording;
         }
 
+        public Variant describe(Recording recording) {
+            return new Variant("(sssxxss)", recording.id, Singularity.Migration.portable_path(recording.file(this)),
+                recording.title, recording.created, recording.duration, Peaks.encode(recording.peaks), recording.transcript);
+        }
+
+        public Recording? receive(Variant data) {
+            string id, portable, title, peaks, transcript;
+            int64 created, duration;
+            data.get("(sssxxss)", out id, out portable, out title, out created, out duration, out peaks, out transcript);
+            var known = find(id);
+            if (known != null) return known;
+            var source = Singularity.Migration.local_file(portable);
+            var recording = new Recording(id);
+            recording.file_name = source.get_basename();
+            recording.title = title;
+            recording.created = created;
+            recording.duration = duration;
+            recording.peaks = Peaks.decode(peaks);
+            recording.transcript = transcript;
+            var target = recording.file(this);
+            if (!target.query_exists()) {
+                try {
+                    source.copy(target, FileCopyFlags.NONE);
+                } catch (Error e) {
+                    warning("Recorder: cannot take %s: %s", portable, e.message);
+                    return null;
+                }
+            }
+            int at = 0;
+            while (at < items.size && items[at].created >= created) at++;
+            items.insert(at, recording);
+            save();
+            added(recording);
+            return recording;
+        }
+
         public Recording? find(string id) {
             foreach (var recording in items) {
                 if (recording.id == id) return recording;
