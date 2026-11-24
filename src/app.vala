@@ -1,6 +1,6 @@
 namespace Singularity.Apps.Voice {
 
-    public class VoiceApp : Singularity.Application, Singularity.Migration.Migratable {
+    public class VoiceApp : Singularity.Application, Singularity.Migration.Migratable, Singularity.Startup.Bootable {
         public GLib.Settings settings { get; private set; }
         public Library library { get; private set; }
         public InputDevices devices { get; private set; }
@@ -157,8 +157,7 @@ namespace Singularity.Apps.Voice {
             base.shutdown();
         }
 
-        public override void open(File[] files, string hint) {
-            activate();
+        private void open_files(File[] files) {
             foreach (var f in files) {
                 string uri = f.get_uri();
                 if (!uri.has_prefix("sinty-recorder://")) continue;
@@ -178,7 +177,38 @@ namespace Singularity.Apps.Voice {
             return window;
         }
 
-        protected override void activate() {
+        public Singularity.Startup.Plan build_plan(Singularity.Startup.Request request) {
+            var plan = new Singularity.Startup.Plan();
+            plan.version = "voice-1";
+            if (request.kind == Singularity.Startup.RequestKind.SERVICE) {
+                plan.main("ready", Singularity.Startup.Category.PREPARE, (c) => {})
+                    .reaches(Singularity.Startup.Milestone.SHELL_READY)
+                    .reaches(Singularity.Startup.Milestone.CONTENT_READY)
+                    .reaches(Singularity.Startup.Milestone.INTERACTIVE);
+                return plan;
+            }
+            var shell = plan.main("window", Singularity.Startup.Category.SHELL, (c) => {
+                show_window();
+                c.window = window;
+            }).reaches(Singularity.Startup.Milestone.SHELL_READY);
+            if (request.kind == Singularity.Startup.RequestKind.OPEN) {
+                var files = request.files();
+                plan.main("open-file", Singularity.Startup.Category.CONTENT, (c) => open_files(files))
+                    .depends_on("window")
+                    .reaches(Singularity.Startup.Milestone.CONTENT_READY)
+                    .reaches(Singularity.Startup.Milestone.INTERACTIVE);
+            } else {
+                shell.reaches(Singularity.Startup.Milestone.CONTENT_READY).reaches(Singularity.Startup.Milestone.INTERACTIVE);
+            }
+            return plan;
+        }
+
+        public void handle_request(Singularity.Startup.Request request) {
+            show_window();
+            if (request.kind == Singularity.Startup.RequestKind.OPEN) open_files(request.files());
+        }
+
+        private void show_window() {
             if (window == null) adopt(new VoiceWindow(this));
             window.present();
             if (record_pending) {
